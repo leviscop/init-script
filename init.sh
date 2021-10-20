@@ -1,9 +1,9 @@
 #!/bin/bash
-apt update && apt upgrade -y
-apt install apt-transport-https ca-certificates curl gnupg lsb-release
+apt update -qq && apt upgrade -qq
+apt install -qq apt-transport-https ca-certificates curl gnupg lsb-release
 curl -fsSL https://download.docker.com/linux/ubuntu/gpg | gpg --dearmor -o /usr/share/keyrings/docker-archive-keyring.gpg
 echo "deb [arch=$(dpkg --print-architecture) signed-by=/usr/share/keyrings/docker-archive-keyring.gpg] https://download.docker.com/linux/ubuntu $(lsb_release -cs) stable" | tee /etc/apt/sources.list.d/docker.list > /dev/null
-apt update && apt install docker-ce docker-ce-cli containerd.io
+apt update -qq && apt install -qq docker-ce docker-ce-cli containerd.io
 curl -s https://raw.githubusercontent.com/leviscop/init-script/main/daemon.json -o /etc/docker/daemon.json
 systemctl restart docker
 docker run -d --name ipv6nat --cap-drop ALL --cap-add NET_ADMIN --cap-add NET_RAW --cap-add SYS_MODULE --network host --restart unless-stopped -v /var/run/docker.sock:/var/run/docker.sock:ro -v /lib/modules:/lib/modules:ro robbertkl/ipv6nat
