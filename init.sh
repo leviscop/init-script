@@ -10,4 +10,8 @@ docker run -d --name ipv6nat --cap-drop ALL --cap-add NET_ADMIN --cap-add NET_RA
 docker run -d -p 9001:9001 --name portainer_agent --restart=always -v /var/run/docker.sock:/var/run/docker.sock -v /var/lib/docker/volumes:/var/lib/docker/volumes portainer/agent:latest
 docker network create -d bridge --ipv6 --subnet fd00:172:20::/48 --gateway fd00:172:20::1 --subnet 172.20.0.0/16 --gateway 172.20.0.1 --attachable gateway
 docker network create -d bridge --ipv6 --subnet fd00:172:24::/48 --gateway fd00:172:24::1 --subnet 172.24.0.0/16 --gateway 172.24.0.1 --attachable database
+mkdir -p /volume/proxy
+curl -s https://raw.githubusercontent.com/leviscop/init-script/main/traefik.toml -o /volume/proxy/traefik.toml
+touch /volume/proxy/acme-$(hostname -s)-dns.json && chmod 600 /volume/proxy/acme-$(hostname -s)-dns.json
+touch /volume/proxy/acme-$(hostname -s)-tls.json && chmod 600 /volume/proxy/acme-$(hostname -s)-tls.json
 exit 0
