@@ -11,7 +11,6 @@ docker run -d -p 9001:9001 --name portainer_agent --restart=always -v /var/run/d
 docker network create -d bridge --ipv6 --subnet fd00:172:20::/48 --gateway fd00:172:20::1 --subnet 172.20.0.0/16 --gateway 172.20.0.1 --attachable gateway
 docker network create -d bridge --ipv6 --subnet fd00:172:24::/48 --gateway fd00:172:24::1 --subnet 172.24.0.0/16 --gateway 172.24.0.1 --attachable database
 mkdir -p /volume
-chown 1000:1000 /volume
 curl -s https://raw.githubusercontent.com/leviscop/init-script/main/.stignore -o /volume/.stignore
 mkdir -p /volume/proxy
 curl -s https://raw.githubusercontent.com/leviscop/init-script/main/traefik.toml -o /volume/proxy/traefik.toml
