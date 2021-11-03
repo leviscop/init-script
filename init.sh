@@ -1,7 +1,13 @@
 #!/bin/bash
-read -p "Enter a hostname: " hostname
-echo "Setting hostname.."
-hostnamectl set-hostname $hostname
+while true; do
+    echo "Hostname is $(hostname -f)"
+    read -p "Do you want to change the hostname? " yn
+    case $yn in
+        [Yy]* ) ptr="$(sed 's/\.$//' <<< $(dig -x $(wget -q -O - https://ipv4.myip.wtf/text) +short))"; read -e -i "$ptr" -p "Enter a hostname: " hostname; echo "Setting hostname.."; hostnamectl set-hostname $hostname; echo "New hostname is $(hostname -f)"; break;;
+        [Nn]* ) break;;
+        * ) break;;
+    esac
+done
 echo "Updating system.."
 apt-get update -q && DEBIAN_FRONTEND=noninteractive DEBIAN_PRIORITY=critical apt-get -q -y -o "Dpkg::Options::=--force-confdef" -o "Dpkg::Options::=--force-confold" upgrade &>/dev/null
 echo "Installing basic packages.."
