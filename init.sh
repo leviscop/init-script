@@ -3,7 +3,7 @@ while true; do
     echo "Hostname is $(hostname -f)"
     read -p "Do you want to change the hostname? " yn
     case $yn in
-        [Yy]* ) ptr="$(sed 's/\.$//' <<< $(dig -x $(wget -q -O - https://ipv4.myip.wtf/text) +short))"; read -e -i "$ptr" -p "Enter a hostname: " hostname; echo "Setting hostname.."; hostnamectl set-hostname $hostname; echo "New hostname is $(hostname -f)"; break;;
+        [Yy]* ) read -e -i "$(sed 's/\.$//' <<< $(dig @1.1.1.1 -x $(wget -q -O - https://ipv4.myip.wtf/text) +short))" -p "Enter a hostname: " hostname; echo "Setting hostname.."; hostnamectl set-hostname $hostname; echo "New hostname is $(hostname -f)"; break;;
         [Nn]* ) break;;
         * ) break;;
     esac
