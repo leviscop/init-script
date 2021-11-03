@@ -8,6 +8,14 @@ while true; do
         * ) break;;
     esac
 done
+while true; do
+    read -p "Do you want to change the root password? " yn
+    case $yn in
+        [Yy]* ) passwd; break;;
+        [Nn]* ) break;;
+        * ) break;;
+    esac
+done
 echo "Updating system.."
 apt-get update -q && DEBIAN_FRONTEND=noninteractive DEBIAN_PRIORITY=critical apt-get -q -y -o "Dpkg::Options::=--force-confdef" -o "Dpkg::Options::=--force-confold" upgrade &>/dev/null
 echo "Installing basic packages.."
