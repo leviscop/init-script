@@ -1,14 +1,5 @@
 #!/bin/bash
 while true; do
-    echo "Hostname is $(hostname -f)"
-    read -p "Do you want to change the hostname? " yn
-    case $yn in
-        [Yy]* ) read -e -i "$(sed 's/\.$//' <<< $(dig @1.1.1.1 -x $(wget -q -O - https://ipv4.myip.wtf/text) +short))" -p "Enter a hostname: " hostname; echo "Setting hostname.."; hostnamectl set-hostname $hostname; echo "New hostname is $(hostname -f)"; break;;
-        [Nn]* ) break;;
-        * ) break;;
-    esac
-done
-while true; do
     read -p "Do you want to change the root password? " yn
     case $yn in
         [Yy]* ) passwd; break;;
@@ -19,7 +10,16 @@ done
 echo "Updating system.."
 apt-get update -q && DEBIAN_FRONTEND=noninteractive DEBIAN_PRIORITY=critical apt-get -q -y -o "Dpkg::Options::=--force-confdef" -o "Dpkg::Options::=--force-confold" upgrade &>/dev/null
 echo "Installing basic packages.."
-DEBIAN_FRONTEND=noninteractive DEBIAN_PRIORITY=critical apt-get -q -y -o "Dpkg::Options::=--force-confdef" -o "Dpkg::Options::=--force-confold" install apt-transport-https ca-certificates curl gnupg lsb-release &>/dev/null
+DEBIAN_FRONTEND=noninteractive DEBIAN_PRIORITY=critical apt-get -q -y -o "Dpkg::Options::=--force-confdef" -o "Dpkg::Options::=--force-confold" install apt-transport-https ca-certificates curl gnupg lsb-release dig &>/dev/null
+while true; do
+    echo "Hostname is $(hostname -f)"
+    read -p "Do you want to change the hostname? " yn
+    case $yn in
+        [Yy]* ) read -e -i "$(sed 's/\.$//' <<< $(dig @1.1.1.1 -x $(wget -q -O - https://ipv4.myip.wtf/text) +short))" -p "Enter a hostname: " hostname; echo "Setting hostname.."; hostnamectl set-hostname $hostname; echo "New hostname is $(hostname -f)"; break;;
+        [Nn]* ) break;;
+        * ) break;;
+    esac
+done
 echo "Installing docker.."
 curl -fsSL https://download.docker.com/linux/ubuntu/gpg | gpg --dearmor -o /usr/share/keyrings/docker-archive-keyring.gpg &>/dev/null
 echo "deb [arch=$(dpkg --print-architecture) signed-by=/usr/share/keyrings/docker-archive-keyring.gpg] https://download.docker.com/linux/ubuntu $(lsb_release -cs) stable" | tee /etc/apt/sources.list.d/docker.list &>/dev/null
