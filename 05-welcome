@@ -1,2 +1,2 @@
 #!/bin/bash
-hostname -f | figlet | cat
+hostname -s | figlet | cat
