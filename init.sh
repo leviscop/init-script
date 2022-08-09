@@ -51,9 +51,6 @@ curl -s https://raw.githubusercontent.com/leviscop/init-script/main/traefik.toml
 touch /volume/proxy/acme-$(hostname -s)-dns.json && chmod 600 /volume/proxy/acme-$(hostname -s)-dns.json &>/dev/null
 touch /volume/proxy/acme-$(hostname -s)-tls.json && chmod 600 /volume/proxy/acme-$(hostname -s)-tls.json &>/dev/null
 sysctl -w net.core.rmem_max=2500000 &>/dev/null
-echo "Adding ssh-key for backup server"
-echo "Enter root password:"
-ssh root@storage-1.swarm.leviscop.net cat /volume/elkarbackup/sshkeys/id_rsa.pub | tee -a /root/.ssh/authorized_keys &>/dev/null
 echo "Done!"
 echo "You can add this environment to portainer with the address: $(hostname -f):9001"
 while true; do
