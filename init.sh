@@ -10,12 +10,20 @@ done
 echo "Updating system.."
 apt-get -qq update &>/dev/null && DEBIAN_FRONTEND=noninteractive DEBIAN_PRIORITY=critical apt-get -q -y -o "Dpkg::Options::=--force-confdef" -o "Dpkg::Options::=--force-confold" upgrade &>/dev/null
 echo "Installing basic packages.."
-DEBIAN_FRONTEND=noninteractive DEBIAN_PRIORITY=critical apt-get -q -y -o "Dpkg::Options::=--force-confdef" -o "Dpkg::Options::=--force-confold" install apt-transport-https ca-certificates curl gnupg lsb-release bind9-dnsutils figlet &>/dev/null
+DEBIAN_FRONTEND=noninteractive DEBIAN_PRIORITY=critical apt-get -q -y -o "Dpkg::Options::=--force-confdef" -o "Dpkg::Options::=--force-confold" install apt-transport-https ca-certificates curl gnupg lsb-release bind9-dnsutils figlet libpam-google-authenticator &>/dev/null
 while true; do
     echo "Hostname is $(hostname -f)"
     read -p "Do you want to change the hostname? " yn
     case $yn in
         [Yy]* ) read -e -i "$(sed 's/\.$//' <<< $(dig @1.1.1.1 -x $(wget -q -O - https://ipv4.myip.wtf/text) +short))" -p "Enter a hostname: " hostname; echo "Setting hostname.."; hostnamectl set-hostname $hostname; echo "New hostname is $(hostname -f)"; break;;
+        [Nn]* ) break;;
+        * ) break;;
+    esac
+done
+while true; do
+    read -p "Enable 2FA? " yn
+    case $yn in
+        [Yy]* ) google-authenticator; sed -i '/pam_google_authenticator.so/d' /etc/pam.d/common-auth; echo 'auth required pam_google_authenticator.so nullok' >> /etc/pam.d/common-auth; sed -i '/pam_google_authenticator.so/d' /etc/pam.d/sshd; echo 'auth required pam_google_authenticator.so' >> /etc/pam.d/sshd; sed -i 's/ChallengeResponseAuthentication.*/ChallengeResponseAuthentication yes/' /etc/ssh/sshd_config; sed -i 's/KbdInteractiveAuthentication.*/KbdInteractiveAuthentication yes/' /etc/ssh/sshd_config; sed -i '/AuthenticationMethods/d' /etc/ssh/sshd_config; echo 'AuthenticationMethods publickey,keyboard-interactive' >> /etc/ssh/sshd_config; systemctl restart sshd.service; break;;
         [Nn]* ) break;;
         * ) break;;
     esac
