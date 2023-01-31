@@ -1,4 +1,30 @@
-#!/bin/bash
+if [ -f /etc/os-release ]; then
+    . /etc/os-release
+    OS=$NAME
+    VER=$VERSION_ID
+elif type lsb_release >/dev/null 2>&1; then
+    OS=$(lsb_release -si)
+    VER=$(lsb_release -sr)
+elif [ -f /etc/lsb-release ]; then
+    . /etc/lsb-release
+    OS=$DISTRIB_ID
+    VER=$DISTRIB_RELEASE
+elif [ -f /etc/debian_version ]; then
+    OS=Debian
+    VER=$(cat /etc/debian_version)
+else
+    OS=$(uname -s)
+    VER=$(uname -r)
+fi
+case $OS in
+"Alpine Linux"|"Ubuntu")
+    echo "OS supported!"
+    ;;
+*)
+    echo "OS unsupported! Exiting.."
+    exit 0
+    ;;
+esac
 while true; do
     read -p "Do you want to change the root password? " yn
     case $yn in
