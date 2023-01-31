@@ -67,12 +67,12 @@ done
 case $OS in
     "Alpine Linux" )
         echo "Installing docker..";
-        apk add docker;
+        apk add docker &>/dev/null;
         curl -s https://raw.githubusercontent.com/leviscop/init-script/main/daemon.json -o /etc/docker/daemon.json &>/dev/null;
-        rc-update add docker;
-        service docker restart;
+        rc-update add docker &>/dev/null;
+        service docker restart &>/dev/null;
         echo "Installing docker-compose..";
-        apk add docker-compose;
+        apk add docker-compose &>/dev/null;
         break;;
     "Ubuntu"|"Debian" )
         curl -s https://raw.githubusercontent.com/leviscop/init-script/main/05-welcome -o /etc/update-motd.d/05-welcome; chmod +x /etc/update-motd.d/05-welcome;
