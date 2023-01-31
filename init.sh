@@ -19,10 +19,12 @@ fi
 VER_SHORT="${VER%.*}"
 case $OS in
 "Alpine Linux"|"Ubuntu"|"Debian")
-    echo "OS supported!"; break;;
+    echo "OS supported!"
+    break;;
 *)
-    echo "OS unsupported! Exiting.."; exit 0; break;;
-    ;;
+    echo "OS unsupported! Exiting.."
+    exit 0
+    break;;
 esac
 while true; do
     read -p "Do you want to change the root password? " yn
