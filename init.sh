@@ -40,7 +40,7 @@ case $OS in
         sed -i "s|#\(.*v$VER_SHORT.*community\)|\1|" /etc/apk/repositories;
         apk update &>/dev/null && apk add --upgrade apk-tools &>/dev/null && apk upgrade --available &>/dev/null;
         echo "Installing basic packages..";
-        apk add ca-certificates curl bind-tools &>/dev/null;
+        apk add ca-certificates curl bind-tools figlet &>/dev/null;
         break;;
     "Ubuntu"|"Debian")
         echo "Updating system..";
@@ -66,6 +66,9 @@ while true; do
 done
 case $OS in
     "Alpine Linux" )
+        echo "Welcome to $OS!"
+        hostname -s | figlet | cat >> /etc/motd
+        curl -s https://raw.githubusercontent.com/leviscop/init-script/main/motd-alpine >> /etc/motd;
         echo "Installing docker..";
         apk add docker &>/dev/null;
         curl -s https://raw.githubusercontent.com/leviscop/init-script/main/daemon.json -o /etc/docker/daemon.json &>/dev/null;
