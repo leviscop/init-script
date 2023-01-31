@@ -19,10 +19,10 @@ fi
 VER_SHORT="${VER%.*}"
 case $OS in
 "Alpine Linux"|"Ubuntu"|"Debian" )
-    echo "OS supported!"
+    echo "OS supported!";
     break;;
 * )
-    echo "OS unsupported! Exiting.."
+    echo "OS unsupported! Exiting..";
     exit 0;;
 esac
 while true; do
@@ -35,18 +35,18 @@ while true; do
 done
 case $OS in
     "Alpine Linux")
-        echo "Updating system.."
-        sed -i "s|#\(.*v$VER.*community\)|\1|" /etc/apk/repositories
-        sed -i "s|#\(.*v$VER_SHORT.*community\)|\1|" /etc/apk/repositories
-        apk update &>/dev/null && apk add --upgrade apk-tools &>/dev/null && apk upgrade --available &>/dev/null
-        echo "Installing basic packages.."
-        apk add ca-certificates curl bind-tools &>/dev/null
+        echo "Updating system..";
+        sed -i "s|#\(.*v$VER.*community\)|\1|" /etc/apk/repositories;
+        sed -i "s|#\(.*v$VER_SHORT.*community\)|\1|" /etc/apk/repositories;
+        apk update &>/dev/null && apk add --upgrade apk-tools &>/dev/null && apk upgrade --available &>/dev/null;
+        echo "Installing basic packages..";
+        apk add ca-certificates curl bind-tools &>/dev/null;
         break;;
     "Ubuntu"|"Debian")
-        echo "Updating system.."
-        apt-get -qq update &>/dev/null && DEBIAN_FRONTEND=noninteractive DEBIAN_PRIORITY=critical apt-get -q -y -o "Dpkg::Options::=--force-confdef" -o "Dpkg::Options::=--force-confold" upgrade &>/dev/null
-        echo "Installing basic packages.."
-        DEBIAN_FRONTEND=noninteractive DEBIAN_PRIORITY=critical apt-get -q -y -o "Dpkg::Options::=--force-confdef" -o "Dpkg::Options::=--force-confold" install apt-transport-https ca-certificates curl gnupg lsb-release bind9-dnsutils figlet &>/dev/null
+        echo "Updating system..";
+        apt-get -qq update &>/dev/null && DEBIAN_FRONTEND=noninteractive DEBIAN_PRIORITY=critical apt-get -q -y -o "Dpkg::Options::=--force-confdef" -o "Dpkg::Options::=--force-confold" upgrade &>/dev/null;
+        echo "Installing basic packages..";
+        DEBIAN_FRONTEND=noninteractive DEBIAN_PRIORITY=critical apt-get -q -y -o "Dpkg::Options::=--force-confdef" -o "Dpkg::Options::=--force-confold" install apt-transport-https ca-certificates curl gnupg lsb-release bind9-dnsutils figlet &>/dev/null;
         break;;
     * ) break;;
 esac
@@ -69,25 +69,25 @@ done
 #done
 case $OS in
     "Alpine Linux" )
-        echo "Installing docker.."
-        apk add docker
-        curl -s https://raw.githubusercontent.com/leviscop/init-script/main/daemon.json -o /etc/docker/daemon.json &>/dev/null
-        rc-update add docker
-        service docker restart
-        echo "Installing docker-compose.."
-        apk add docker-compose
+        echo "Installing docker..";
+        apk add docker;
+        curl -s https://raw.githubusercontent.com/leviscop/init-script/main/daemon.json -o /etc/docker/daemon.json &>/dev/null;
+        rc-update add docker;
+        service docker restart;
+        echo "Installing docker-compose..";
+        apk add docker-compose;
         break;;
     "Ubuntu"|"Debian" )
-        curl -s https://raw.githubusercontent.com/leviscop/init-script/main/05-welcome -o /etc/update-motd.d/05-welcome; chmod +x /etc/update-motd.d/05-welcome
-        echo "Installing docker.."
-        curl -fsSL https://download.docker.com/linux/ubuntu/gpg | gpg --dearmor -o /usr/share/keyrings/docker-archive-keyring.gpg &>/dev/null
-        echo "deb [arch=$(dpkg --print-architecture) signed-by=/usr/share/keyrings/docker-archive-keyring.gpg] https://download.docker.com/linux/ubuntu $(lsb_release -cs) stable" | tee /etc/apt/sources.list.d/docker.list &>/dev/null
-        apt-get -qq update &>/dev/null && DEBIAN_FRONTEND=noninteractive DEBIAN_PRIORITY=critical apt-get -q -y -o "Dpkg::Options::=--force-confdef" -o "Dpkg::Options::=--force-confold" install docker-ce docker-ce-cli containerd.io &>/dev/null
-        curl -s https://raw.githubusercontent.com/leviscop/init-script/main/daemon.json -o /etc/docker/daemon.json &>/dev/null
-        systemctl restart docker &>/dev/null
-        echo "Installing docker-compose.."
-        curl -L "https://github.com/docker/compose/releases/download/1.29.2/docker-compose-$(uname -s)-$(uname -m)" -o /usr/local/bin/docker-compose &>/dev/null
-        chmod +x /usr/local/bin/docker-compose &>/dev/null
+        curl -s https://raw.githubusercontent.com/leviscop/init-script/main/05-welcome -o /etc/update-motd.d/05-welcome; chmod +x /etc/update-motd.d/05-welcome;
+        echo "Installing docker..";
+        curl -fsSL https://download.docker.com/linux/ubuntu/gpg | gpg --dearmor -o /usr/share/keyrings/docker-archive-keyring.gpg &>/dev/null;
+        echo "deb [arch=$(dpkg --print-architecture) signed-by=/usr/share/keyrings/docker-archive-keyring.gpg] https://download.docker.com/linux/ubuntu $(lsb_release -cs) stable" | tee /etc/apt/sources.list.d/docker.list &>/dev/null;
+        apt-get -qq update &>/dev/null && DEBIAN_FRONTEND=noninteractive DEBIAN_PRIORITY=critical apt-get -q -y -o "Dpkg::Options::=--force-confdef" -o "Dpkg::Options::=--force-confold" install docker-ce docker-ce-cli containerd.io &>/dev/null;
+        curl -s https://raw.githubusercontent.com/leviscop/init-script/main/daemon.json -o /etc/docker/daemon.json &>/dev/null;
+        systemctl restart docker &>/dev/null;
+        echo "Installing docker-compose..";
+        curl -L "https://github.com/docker/compose/releases/download/1.29.2/docker-compose-$(uname -s)-$(uname -m)" -o /usr/local/bin/docker-compose &>/dev/null;
+        chmod +x /usr/local/bin/docker-compose &>/dev/null;
         break;;
     * ) break;;
 esac
