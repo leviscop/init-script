@@ -66,7 +66,7 @@ while true; do
 done
 case $OS in
     "Alpine Linux" )
-        echo "Welcome to $OS!"
+        echo "Welcome to $OS!" > /etc/motd
         hostname -s | figlet | cat >> /etc/motd
         curl -s https://raw.githubusercontent.com/leviscop/init-script/main/motd-alpine >> /etc/motd;
         echo "Installing docker..";
