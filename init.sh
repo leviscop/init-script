@@ -19,8 +19,7 @@ fi
 VER_SHORT="${VER%.*}"
 case $OS in
 "Alpine Linux"|"Ubuntu"|"Debian" )
-    echo "OS supported!";
-    break;;
+    echo "OS supported!";;
 * )
     echo "OS unsupported! Exiting..";
     exit 0;;
@@ -28,9 +27,9 @@ esac
 while true; do
     read -p "Do you want to change the root password? " yn
     case $yn in
-        [Yy]* ) passwd; break;;
-        [Nn]* ) break;;
-        * ) break;;
+        [Yy]* ) passwd;;
+        [Nn]* ) :;;
+        * ) :;;
     esac
 done
 case $OS in
@@ -40,15 +39,13 @@ case $OS in
         sed -i "s|#\(.*v$VER_SHORT.*community\)|\1|" /etc/apk/repositories;
         apk update &>/dev/null && apk add --upgrade apk-tools &>/dev/null && apk upgrade --available &>/dev/null;
         echo "Installing basic packages..";
-        apk add ca-certificates curl bind-tools figlet &>/dev/null;
-        break;;
+        apk add ca-certificates curl bind-tools figlet &>/dev/null;;
     "Ubuntu"|"Debian")
         echo "Updating system..";
         apt-get -qq update &>/dev/null && DEBIAN_FRONTEND=noninteractive DEBIAN_PRIORITY=critical apt-get -q -y -o "Dpkg::Options::=--force-confdef" -o "Dpkg::Options::=--force-confold" upgrade &>/dev/null;
         echo "Installing basic packages..";
-        DEBIAN_FRONTEND=noninteractive DEBIAN_PRIORITY=critical apt-get -q -y -o "Dpkg::Options::=--force-confdef" -o "Dpkg::Options::=--force-confold" install apt-transport-https ca-certificates curl gnupg lsb-release bind9-dnsutils figlet &>/dev/null;
-        break;;
-    * ) break;;
+        DEBIAN_FRONTEND=noninteractive DEBIAN_PRIORITY=critical apt-get -q -y -o "Dpkg::Options::=--force-confdef" -o "Dpkg::Options::=--force-confold" install apt-transport-https ca-certificates curl gnupg lsb-release bind9-dnsutils figlet &>/dev/null;;
+    * ) :;;
 esac
 while true; do
     echo "Hostname is $(hostname -f)"
@@ -58,10 +55,9 @@ while true; do
         echo "Setting hostname..";
         echo "$hostname" > /etc/hostname;
         hostname -F /etc/hostname;
-        echo "New hostname is $(hostname -f)";
-        break;;
-        [Nn]* ) break;;
-        * ) break;;
+        echo "New hostname is $(hostname -f)";;
+        [Nn]* ) :;;
+        * ) :;;
     esac
 done
 case $OS in
@@ -75,8 +71,7 @@ case $OS in
         rc-update add docker &>/dev/null;
         service docker restart &>/dev/null;
         echo "Installing docker-compose..";
-        apk add docker-compose &>/dev/null;
-        break;;
+        apk add docker-compose &>/dev/null;;
     "Ubuntu"|"Debian" )
         curl -s https://raw.githubusercontent.com/leviscop/init-script/main/05-welcome -o /etc/update-motd.d/05-welcome; chmod +x /etc/update-motd.d/05-welcome;
         echo "Installing docker..";
@@ -87,9 +82,8 @@ case $OS in
         systemctl restart docker &>/dev/null;
         echo "Installing docker-compose..";
         curl -L "https://github.com/docker/compose/releases/download/1.29.2/docker-compose-$(uname -s)-$(uname -m)" -o /usr/local/bin/docker-compose &>/dev/null;
-        chmod +x /usr/local/bin/docker-compose &>/dev/null;
-        break;;
-    * ) break;;
+        chmod +x /usr/local/bin/docker-compose &>/dev/null;;
+    * ) :;;
 esac
 echo "Running basic containers.."
 docker run -d --name ipv6nat --cap-drop ALL --cap-add NET_ADMIN --cap-add NET_RAW --cap-add SYS_MODULE --network host --restart unless-stopped -v /var/run/docker.sock:/var/run/docker.sock:ro -v /lib/modules:/lib/modules:ro robbertkl/ipv6nat &>/dev/null
@@ -97,9 +91,9 @@ docker run -d -p 9001:9001 --name portainer_agent --restart=always -v /var/run/d
 while true; do
     read -p "Enable monitoring? " yn
     case $yn in
-        [Yy]* ) mkdir -p /volume/dem &>/dev/null; curl -s https://raw.githubusercontent.com/leviscop/init-script/main/dem.conf -o /volume/dem/conf.yml &>/dev/null; read -p "Discord webhook url: " webhook; sed -i "s/<hostname>/$(hostname -s)/g" /volume/dem/conf.yml; sed -i "s#<webhook>#$webhook#g" /volume/dem/conf.yml; docker run -d --name dem --restart=always -v /var/run/docker.sock:/var/run/docker.sock -v /volume/dem/conf.yml:/app/conf.yml quaide/dem:latest &>/dev/null; break;;
-        [Nn]* ) break;;
-        * ) break;;
+        [Yy]* ) mkdir -p /volume/dem &>/dev/null; curl -s https://raw.githubusercontent.com/leviscop/init-script/main/dem.conf -o /volume/dem/conf.yml &>/dev/null; read -p "Discord webhook url: " webhook; sed -i "s/<hostname>/$(hostname -s)/g" /volume/dem/conf.yml; sed -i "s#<webhook>#$webhook#g" /volume/dem/conf.yml; docker run -d --name dem --restart=always -v /var/run/docker.sock:/var/run/docker.sock -v /volume/dem/conf.yml:/app/conf.yml quaide/dem:latest &>/dev/null;;
+        [Nn]* ) :;;
+        * ) :;;
     esac
 done
 echo "Creating basic networks.."
