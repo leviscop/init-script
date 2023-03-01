@@ -27,8 +27,8 @@ esac
 read -p "Do you want to change the root password? " yn
 case $yn in
     [Yy]* ) passwd;;
-    [Nn]* ) echo -n "";;
-    * ) echo -n "";;
+    [Nn]* ) ;;
+    * ) ;;
 esac
 case $OS in
     "Alpine Linux")
@@ -43,7 +43,7 @@ case $OS in
         apt-get -qq update &>/dev/null && DEBIAN_FRONTEND=noninteractive DEBIAN_PRIORITY=critical apt-get -q -y -o "Dpkg::Options::=--force-confdef" -o "Dpkg::Options::=--force-confold" upgrade &>/dev/null;
         echo "Installing basic packages..";
         DEBIAN_FRONTEND=noninteractive DEBIAN_PRIORITY=critical apt-get -q -y -o "Dpkg::Options::=--force-confdef" -o "Dpkg::Options::=--force-confold" install apt-transport-https ca-certificates curl gnupg lsb-release bind9-dnsutils figlet &>/dev/null;;
-    * ) echo -n "";;
+    * ) ;;
 esac
 echo "Hostname is $(hostname -f)"
 read -p "Do you want to change the hostname? " yn
@@ -53,8 +53,8 @@ case $yn in
     echo "$hostname" > /etc/hostname;
     hostname -F /etc/hostname;
     echo "New hostname is $(hostname -f)";;
-    [Nn]* ) echo -n "";;
-    * ) echo -n "";;
+    [Nn]* ) ;;
+    * ) ;;
 esac
 case $OS in
     "Alpine Linux" )
@@ -79,7 +79,7 @@ case $OS in
         echo "Installing docker-compose..";
         curl -L "https://github.com/docker/compose/releases/download/1.29.2/docker-compose-$(uname -s)-$(uname -m)" -o /usr/local/bin/docker-compose &>/dev/null;
         chmod +x /usr/local/bin/docker-compose &>/dev/null;;
-    * ) echo -n "";;
+    * ) ;;
 esac
 echo "Running basic containers.."
 docker run -d --name ipv6nat --cap-drop ALL --cap-add NET_ADMIN --cap-add NET_RAW --cap-add SYS_MODULE --network host --restart unless-stopped -v /var/run/docker.sock:/var/run/docker.sock:ro -v /lib/modules:/lib/modules:ro robbertkl/ipv6nat &>/dev/null
@@ -87,8 +87,8 @@ docker run -d -p 9001:9001 --name portainer_agent --restart=always -v /var/run/d
 read -p "Enable monitoring? " yn
 case $yn in
     [Yy]* ) mkdir -p /volume/dem &>/dev/null; curl -s https://raw.githubusercontent.com/leviscop/init-script/main/dem.conf -o /volume/dem/conf.yml &>/dev/null; read -p "Discord webhook url: " webhook; sed -i "s/<hostname>/$(hostname -s)/g" /volume/dem/conf.yml; sed -i "s#<webhook>#$webhook#g" /volume/dem/conf.yml; docker run -d --name dem --restart=always -v /var/run/docker.sock:/var/run/docker.sock -v /volume/dem/conf.yml:/app/conf.yml quaide/dem:latest &>/dev/null;;
-    [Nn]* ) echo -n "";;
-    * ) echo -n "";;
+    [Nn]* ) ;;
+    * ) ;;
 esac
 echo "Creating basic networks.."
 docker network create -d bridge --ipv6 --subnet fd00:172:20::/48 --gateway fd00:172:20::1 --subnet 172.20.0.0/16 --gateway 172.20.0.1 --attachable gateway &>/dev/null
