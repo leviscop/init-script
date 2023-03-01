@@ -28,8 +28,8 @@ while true; do
     read -p "Do you want to change the root password? " yn
     case $yn in
         [Yy]* ) passwd;;
-        [Nn]* ) ;;
-        * ) ;;
+        [Nn]* ) echo -n "";;
+        * ) echo -n "";;
     esac
 done
 case $OS in
@@ -56,8 +56,8 @@ while true; do
         echo "$hostname" > /etc/hostname;
         hostname -F /etc/hostname;
         echo "New hostname is $(hostname -f)";;
-        [Nn]* ) ;;
-        * ) ;;
+        [Nn]* ) echo -n "";;
+        * ) echo -n "";;
     esac
 done
 case $OS in
@@ -92,8 +92,8 @@ while true; do
     read -p "Enable monitoring? " yn
     case $yn in
         [Yy]* ) mkdir -p /volume/dem &>/dev/null; curl -s https://raw.githubusercontent.com/leviscop/init-script/main/dem.conf -o /volume/dem/conf.yml &>/dev/null; read -p "Discord webhook url: " webhook; sed -i "s/<hostname>/$(hostname -s)/g" /volume/dem/conf.yml; sed -i "s#<webhook>#$webhook#g" /volume/dem/conf.yml; docker run -d --name dem --restart=always -v /var/run/docker.sock:/var/run/docker.sock -v /volume/dem/conf.yml:/app/conf.yml quaide/dem:latest &>/dev/null;;
-        [Nn]* ) ;;
-        * ) ;;
+        [Nn]* ) echo -n "";;
+        * ) echo -n "";;
     esac
 done
 echo "Creating basic networks.."
