@@ -30,6 +30,15 @@ case $yn in
     [Nn]* ) ;;
     * ) ;;
 esac
+read -p "Do you want to change the ssh port? (Default: 22)" yn
+case $yn in
+    [Yy]* ) read -p "Enter the new ssh port: " sshport;
+    sed -i "s/\(#\|\)Port .*/Port $sshport/" /etc/ssh/sshd_config;;
+    [Nn]* ) ;;
+    * ) ;;
+esac
+echo "Enabling root login via ssh.."
+sed -i "/\"/! s/\(#\|\)PermitRootLogin .*/PermitRootLogin yes/" /etc/ssh/sshd_config;
 case $OS in
     "Alpine Linux")
         echo "Updating system..";
@@ -83,13 +92,13 @@ case $OS in
 esac
 read -p "Set custom portainer agent port? (Default: 9001) " yn
 case $yn in
-    [Yy]* ) read -p "Enter custom port: " port;;
-    [Nn]* ) port=9001;;
+    [Yy]* ) read -p "Enter the custom port: " agentport;;
+    [Nn]* ) agentport=9001;;
     * ) ;;
 esac
 echo "Running basic containers.."
 docker run -d --name ipv6nat --cap-drop ALL --cap-add NET_ADMIN --cap-add NET_RAW --cap-add SYS_MODULE --network host --restart unless-stopped -v /var/run/docker.sock:/var/run/docker.sock:ro -v /lib/modules:/lib/modules:ro robbertkl/ipv6nat &>/dev/null
-docker run -d -p $port:9001 --name portainer_agent --restart=always -v /var/run/docker.sock:/var/run/docker.sock -v /var/lib/docker/volumes:/var/lib/docker/volumes portainer/agent:latest &>/dev/null
+docker run -d -p $agentport:9001 --name portainer_agent --restart=always -v /var/run/docker.sock:/var/run/docker.sock -v /var/lib/docker/volumes:/var/lib/docker/volumes portainer/agent:latest &>/dev/null
 read -p "Enable monitoring? " yn
 case $yn in
     [Yy]* ) mkdir -p /volume/dem &>/dev/null; curl -s https://raw.githubusercontent.com/leviscop/init-script/main/dem.conf -o /volume/dem/conf.yml &>/dev/null; read -p "Discord webhook url: " webhook; sed -i "s/<hostname>/$(hostname -s)/g" /volume/dem/conf.yml; sed -i "s#<webhook>#$webhook#g" /volume/dem/conf.yml; docker run -d --name dem --restart=always -v /var/run/docker.sock:/var/run/docker.sock -v /volume/dem/conf.yml:/app/conf.yml quaide/dem:latest &>/dev/null;;
