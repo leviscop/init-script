@@ -24,6 +24,13 @@ case $OS in
     echo "OS unsupported! Exiting..";
     exit 0;;
 esac
+read -p "Generate a new machine id? " yn
+case $yn in
+    [Yy]* ) rm /etc/machine-id;
+    systemd-machine-id-setup;;
+    [Nn]* ) ;;
+    * ) ;;
+esac
 read -p "Do you want to change the root password? " yn
 case $yn in
     [Yy]* ) passwd;;
