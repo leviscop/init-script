@@ -37,7 +37,7 @@ case $yn in
     [Nn]* ) ;;
     * ) ;;
 esac
-read -p "Do you want to change the ssh port? (Default: 22)" yn
+read -p "Do you want to change the ssh port? (Default: 22) " yn
 case $yn in
     [Yy]* ) read -p "Enter the new ssh port: " sshport;
     sed -i "s/\(#\|\)Port .*/Port $sshport/" /etc/ssh/sshd_config;;
