@@ -1,24 +1,13 @@
-if [ -f /etc/debian_version ]; then
-    OS=Debian
-    VER=$(cat /etc/debian_version)
-elif [ -f /etc/os-release ]; then
-    . /etc/os-release
-    OS=$NAME
-    VER=$VERSION_ID
-elif type lsb_release >/dev/null 2>&1; then
-    OS=$(lsb_release -si)
-    VER=$(lsb_release -sr)
-elif [ -f /etc/lsb-release ]; then
-    . /etc/lsb-release
-    OS=$DISTRIB_ID
-    VER=$DISTRIB_RELEASE
-else
-    OS=$(uname -s)
-    VER=$(uname -r)
+if [[ -f /etc/os-release ]]; then
+     # On Linux systems
+     source /etc/os-release
+     OS=$ID
+ else
+     # On systems other than Linux (e.g. Mac or FreeBSD)
+     OS=$(uname)
 fi
-VER_SHORT="${VER%.*}"
 case $OS in
-"Alpine Linux"|"Ubuntu"|"Debian" )
+"alpine"|"ubuntu"|"debian" )
     echo "OS supported!";;
 * )
     echo "OS unsupported! Exiting..";
@@ -47,14 +36,14 @@ esac
 echo "Enabling root login via ssh.."
 sed -i "/\"/! s/\(#\|\)PermitRootLogin .*/PermitRootLogin yes/" /etc/ssh/sshd_config;
 case $OS in
-    "Alpine Linux")
+    "alpine")
         echo "Updating system..";
         sed -i "s|#\(.*v$VER.*community\)|\1|" /etc/apk/repositories;
         sed -i "s|#\(.*v$VER_SHORT.*community\)|\1|" /etc/apk/repositories;
         apk update &>/dev/null && apk add --upgrade apk-tools &>/dev/null && apk upgrade --available &>/dev/null;
         echo "Installing basic packages..";
         apk add ca-certificates curl bind-tools figlet &>/dev/null;;
-    "Ubuntu"|"Debian")
+    "ubuntu"|"debian")
         echo "Updating system..";
         apt-get -qq update &>/dev/null && DEBIAN_FRONTEND=noninteractive DEBIAN_PRIORITY=critical apt-get -q -y -o "Dpkg::Options::=--force-confdef" -o "Dpkg::Options::=--force-confold" upgrade &>/dev/null;
         echo "Installing basic packages..";
@@ -73,7 +62,7 @@ case $yn in
     * ) ;;
 esac
 case $OS in
-    "Alpine Linux" )
+    "alpine" )
         echo "Welcome to $OS!" > /etc/motd
         hostname -s | figlet | cat >> /etc/motd
         curl -s https://raw.githubusercontent.com/leviscop/init-script/main/motd-alpine >> /etc/motd;
@@ -84,7 +73,7 @@ case $OS in
         service docker restart &>/dev/null;
         echo "Installing docker-compose..";
         apk add docker-compose &>/dev/null;;
-    "Ubuntu" )
+    "ubuntu" )
         curl -s https://raw.githubusercontent.com/leviscop/init-script/main/05-welcome -o /etc/update-motd.d/05-welcome; chmod +x /etc/update-motd.d/05-welcome;
         echo "Installing docker..";
         curl -fsSL https://download.docker.com/linux/ubuntu/gpg | gpg --dearmor -o /usr/share/keyrings/docker-archive-keyring.gpg &>/dev/null;
@@ -95,7 +84,7 @@ case $OS in
         echo "Installing docker-compose..";
         curl -L "https://github.com/docker/compose/releases/download/1.29.2/docker-compose-$(uname -s)-$(uname -m)" -o /usr/local/bin/docker-compose &>/dev/null;
         chmod +x /usr/local/bin/docker-compose &>/dev/null;;
-    "Debian" )
+    "debian" )
         curl -s https://raw.githubusercontent.com/leviscop/init-script/main/05-welcome -o /etc/update-motd.d/05-welcome; chmod +x /etc/update-motd.d/05-welcome;
         echo "Installing docker..";
         curl -fsSL https://download.docker.com/linux/debian/gpg | gpg --dearmor -o /usr/share/keyrings/docker-archive-keyring.gpg &>/dev/null;
